@@ -9,10 +9,14 @@ const Activities = () => {
   useEffect(() => {
     const loadActivities = async () => {
       try {
-        const response = await fetch(buildApiUrl('activities'));
+        const response = await fetch(buildApiUrl('activities'), {
+          headers: { Accept: 'application/json' },
+        });
+
         if (!response.ok) {
           throw new Error('Unable to load activities');
         }
+
         const payload = await response.json();
         setActivities(getResourceItems(payload));
       } catch (err) {
@@ -36,15 +40,19 @@ const Activities = () => {
   return (
     <div>
       <h2>Activities</h2>
-      <ul className="list-group">
-        {activities.map((activity) => (
-          <li className="list-group-item" key={activity._id || activity.id || activity.activityType}>
-            <strong>{activity.activityType}</strong>
-            <div>{activity.notes}</div>
-            <small>{activity.durationMinutes} min • {activity.distanceKm ?? 0} km</small>
-          </li>
-        ))}
-      </ul>
+      {activities.length === 0 ? (
+        <p className="text-muted">No activities available yet.</p>
+      ) : (
+        <ul className="list-group">
+          {activities.map((activity, index) => (
+            <li className="list-group-item" key={activity._id || activity.id || `${activity.activityType}-${index}`}>
+              <strong>{activity.activityType}</strong>
+              <div>{activity.notes}</div>
+              <small>{activity.durationMinutes} min • {activity.distanceKm ?? 0} km</small>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };

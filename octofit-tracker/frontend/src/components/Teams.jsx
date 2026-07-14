@@ -9,10 +9,14 @@ const Teams = () => {
   useEffect(() => {
     const loadTeams = async () => {
       try {
-        const response = await fetch(buildApiUrl('teams'));
+        const response = await fetch(buildApiUrl('teams'), {
+          headers: { Accept: 'application/json' },
+        });
+
         if (!response.ok) {
           throw new Error('Unable to load teams');
         }
+
         const payload = await response.json();
         setTeams(getResourceItems(payload));
       } catch (err) {
@@ -36,15 +40,19 @@ const Teams = () => {
   return (
     <div>
       <h2>Teams</h2>
-      <ul className="list-group">
-        {teams.map((team) => (
-          <li className="list-group-item" key={team._id || team.id || team.name}>
-            <strong>{team.name}</strong>
-            <div>{team.description}</div>
-            <small>{team.focus} • {team.city}</small>
-          </li>
-        ))}
-      </ul>
+      {teams.length === 0 ? (
+        <p className="text-muted">No teams available yet.</p>
+      ) : (
+        <ul className="list-group">
+          {teams.map((team, index) => (
+            <li className="list-group-item" key={team._id || team.id || `${team.name}-${index}`}>
+              <strong>{team.name}</strong>
+              <div>{team.description}</div>
+              <small>{team.focus} • {team.city}</small>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };

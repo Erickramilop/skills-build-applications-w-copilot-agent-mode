@@ -10,8 +10,14 @@ export const getApiBaseUrl = () => {
 };
 
 export const buildApiUrl = (resource) => {
-  const normalizedResource = resource.replace(/^\/+|\/+$/g, '');
-  return `${getApiBaseUrl()}/api/${normalizedResource}/`;
+  const normalizedResource = (resource || '').replace(/^\/+|\/+$/g, '');
+  const baseUrl = getApiBaseUrl();
+
+  if (!normalizedResource) {
+    return `${baseUrl}/api/`;
+  }
+
+  return `${baseUrl}/api/${normalizedResource}/`;
 };
 
 export const getResourceItems = (payload) => {
@@ -19,12 +25,28 @@ export const getResourceItems = (payload) => {
     return payload;
   }
 
-  if (payload && Array.isArray(payload.items)) {
+  if (!payload || typeof payload !== 'object') {
+    return [];
+  }
+
+  if (Array.isArray(payload.items)) {
     return payload.items;
   }
 
-  if (payload && Array.isArray(payload.results)) {
+  if (Array.isArray(payload.results)) {
     return payload.results;
+  }
+
+  if (Array.isArray(payload.data)) {
+    return payload.data;
+  }
+
+  if (payload.data && Array.isArray(payload.data.items)) {
+    return payload.data.items;
+  }
+
+  if (payload.data && Array.isArray(payload.data.results)) {
+    return payload.data.results;
   }
 
   return [];

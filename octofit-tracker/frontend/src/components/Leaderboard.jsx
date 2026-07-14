@@ -9,10 +9,14 @@ const Leaderboard = () => {
   useEffect(() => {
     const loadLeaderboard = async () => {
       try {
-        const response = await fetch(buildApiUrl('leaderboard'));
+        const response = await fetch(buildApiUrl('leaderboard'), {
+          headers: { Accept: 'application/json' },
+        });
+
         if (!response.ok) {
           throw new Error('Unable to load leaderboard');
         }
+
         const payload = await response.json();
         setEntries(getResourceItems(payload));
       } catch (err) {
@@ -36,13 +40,17 @@ const Leaderboard = () => {
   return (
     <div>
       <h2>Leaderboard</h2>
-      <ul className="list-group">
-        {entries.map((entry) => (
-          <li className="list-group-item" key={entry._id || entry.id || entry.rank}>
-            <strong>#{entry.rank}</strong> • {entry.userId?.name || entry.name} • {entry.score} pts
-          </li>
-        ))}
-      </ul>
+      {entries.length === 0 ? (
+        <p className="text-muted">No leaderboard entries yet.</p>
+      ) : (
+        <ul className="list-group">
+          {entries.map((entry, index) => (
+            <li className="list-group-item" key={entry._id || entry.id || `${entry.rank}-${index}`}>
+              <strong>#{entry.rank}</strong> • {entry.userId?.name || entry.name} • {entry.score} pts
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };

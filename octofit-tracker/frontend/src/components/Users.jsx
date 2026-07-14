@@ -9,10 +9,14 @@ const Users = () => {
   useEffect(() => {
     const loadUsers = async () => {
       try {
-        const response = await fetch(buildApiUrl('users'));
+        const response = await fetch(buildApiUrl('users'), {
+          headers: { Accept: 'application/json' },
+        });
+
         if (!response.ok) {
           throw new Error('Unable to load users');
         }
+
         const payload = await response.json();
         setUsers(getResourceItems(payload));
       } catch (err) {
@@ -36,15 +40,19 @@ const Users = () => {
   return (
     <div>
       <h2>Users</h2>
-      <ul className="list-group">
-        {users.map((user) => (
-          <li className="list-group-item" key={user._id || user.id || user.email}>
-            <strong>{user.name || user.username}</strong>
-            <div>{user.email}</div>
-            <small>{user.city} • {user.fitnessGoal}</small>
-          </li>
-        ))}
-      </ul>
+      {users.length === 0 ? (
+        <p className="text-muted">No users available yet.</p>
+      ) : (
+        <ul className="list-group">
+          {users.map((user, index) => (
+            <li className="list-group-item" key={user._id || user.id || `${user.email}-${index}`}>
+              <strong>{user.name || user.username}</strong>
+              <div>{user.email}</div>
+              <small>{user.city} • {user.fitnessGoal}</small>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };

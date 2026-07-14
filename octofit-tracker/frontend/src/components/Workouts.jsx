@@ -9,10 +9,14 @@ const Workouts = () => {
   useEffect(() => {
     const loadWorkouts = async () => {
       try {
-        const response = await fetch(buildApiUrl('workouts'));
+        const response = await fetch(buildApiUrl('workouts'), {
+          headers: { Accept: 'application/json' },
+        });
+
         if (!response.ok) {
           throw new Error('Unable to load workouts');
         }
+
         const payload = await response.json();
         setWorkouts(getResourceItems(payload));
       } catch (err) {
@@ -36,15 +40,19 @@ const Workouts = () => {
   return (
     <div>
       <h2>Workouts</h2>
-      <ul className="list-group">
-        {workouts.map((workout) => (
-          <li className="list-group-item" key={workout._id || workout.id || workout.name}>
-            <strong>{workout.name}</strong>
-            <div>{workout.description}</div>
-            <small>{workout.durationMinutes} min • {workout.focusArea}</small>
-          </li>
-        ))}
-      </ul>
+      {workouts.length === 0 ? (
+        <p className="text-muted">No workouts available yet.</p>
+      ) : (
+        <ul className="list-group">
+          {workouts.map((workout, index) => (
+            <li className="list-group-item" key={workout._id || workout.id || `${workout.name}-${index}`}>
+              <strong>{workout.name}</strong>
+              <div>{workout.description}</div>
+              <small>{workout.durationMinutes} min • {workout.focusArea}</small>
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };
