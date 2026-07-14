@@ -4,10 +4,11 @@ import Leaderboard from './components/Leaderboard';
 import Teams from './components/Teams';
 import Users from './components/Users';
 import Workouts from './components/Workouts';
+import { getCodespaceName } from './utils/api';
 import './App.css';
 
 function App() {
-  const codespaceName = import.meta.env.VITE_CODESPACE_NAME?.trim();
+  const codespaceName = getCodespaceName();
   const apiPreview = codespaceName
     ? `https://${codespaceName}-8000.app.github.dev/api`
     : 'http://localhost:8000/api';

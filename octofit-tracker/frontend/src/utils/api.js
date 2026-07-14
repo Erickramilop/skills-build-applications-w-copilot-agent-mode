@@ -1,4 +1,19 @@
-const getCodespaceName = () => import.meta.env.VITE_CODESPACE_NAME?.trim();
+export const getCodespaceName = () => {
+  const envValue = import.meta.env.VITE_CODESPACE_NAME?.trim();
+  if (envValue) {
+    return envValue;
+  }
+
+  if (typeof window !== 'undefined') {
+    const hostname = window.location.hostname || '';
+    const codespaceMatch = hostname.match(/^([a-z0-9-]+)-(?:5173|8000)\.app\.github\.dev$/i);
+    if (codespaceMatch) {
+      return codespaceMatch[1];
+    }
+  }
+
+  return '';
+};
 
 export const getApiBaseUrl = () => {
   const codespaceName = getCodespaceName();
