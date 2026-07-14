@@ -6,7 +6,7 @@ export const getCodespaceName = () => {
 
   if (typeof window !== 'undefined') {
     const hostname = window.location.hostname || '';
-    const codespaceMatch = hostname.match(/^([a-z0-9-]+)-(?:5173|8000)\.app\.github\.dev$/i);
+    const codespaceMatch = hostname.match(/^([a-z0-9-]+)-\d+\.app\.github\.dev$/i);
     if (codespaceMatch) {
       return codespaceMatch[1];
     }
